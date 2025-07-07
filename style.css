@@ -1,0 +1,64 @@
+body {
+  background-color: black;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 2rem;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}
+
+.terminal {
+  max-width: 800px;
+  width: 100%;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  position: relative;
+}
+
+.hidden {
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+
+.reveal {
+  opacity: 1;
+}
+
+.ascii {
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+  font-size: 1.5rem;
+}
+
+.cursor {
+  display: inline-block;
+  color: #00ff00;
+  animation: blink 1s infinite step-start;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* FLICKERING */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 0, 0.05),
+    rgba(0, 255, 0, 0.05) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  z-index: 100;
+}
