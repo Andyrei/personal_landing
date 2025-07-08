@@ -2,21 +2,24 @@ body {
   background-color: black;
   color: #00ff00;
   font-family: 'Courier New', Courier, monospace;
-  padding: 2rem;
+  padding: 1rem;
   margin: 0;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: start;
+  overflow-x: hidden;
 }
 
 .terminal {
   max-width: 800px;
   width: 100%;
-  font-size: 1.2rem;
-  line-height: 1.5;
+  font-size: 1rem;
+  line-height: 1.4;
   white-space: pre-wrap;
   position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .hidden {
@@ -31,7 +34,8 @@ body {
 .ascii {
   color: #00ff00;
   text-shadow: 0 0 5px #00ff00;
-  font-size: 1.5rem;
+  font-size: 1rem;
+  margin-top: 1rem;
 }
 
 .cursor {
@@ -61,4 +65,114 @@ body::after {
   );
   pointer-events: none;
   z-index: 100;
+}
+
+/* MOBILE RESPONSIVE DESIGN */
+
+/* Large tablets and small desktops */
+@media screen and (max-width: 768px) {
+  body {
+    padding: 1rem 0.75rem;
+    align-items: flex-start;
+  }
+  
+  .terminal {
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+  
+  .ascii {
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile devices */
+@media screen and (max-width: 480px) {
+  body {
+    padding: 0.5rem;
+    min-height: 100vh;
+  }
+  
+  .terminal {
+    font-size: 0.85rem;
+    line-height: 1.2;
+    max-width: 100%;
+  }
+  
+  .ascii {
+    font-size: 0.7rem;
+    margin-top: 0.5rem;
+  }
+  
+  /* Reduce glow effect for better mobile performance */
+  .ascii {
+    text-shadow: 0 0 3px #00ff00;
+  }
+  
+  /* Adjust scanlines for mobile */
+  body::after {
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 0, 0.03),
+      rgba(0, 255, 0, 0.03) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+}
+
+/* Very small mobile devices */
+@media screen and (max-width: 320px) {
+  body {
+    padding: 0.25rem;
+  }
+  
+  .terminal {
+    font-size: 0.75rem;
+    line-height: 1.1;
+  }
+  
+  .ascii {
+    font-size: 0.6rem;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  body {
+    padding: 0.5rem;
+    align-items: flex-start;
+  }
+  
+  .terminal {
+    font-size: 0.8rem;
+  }
+  
+  .ascii {
+    font-size: 0.7rem;
+    margin-top: 0.25rem;
+  }
+}
+
+/* High DPI displays (Retina) */
+@media screen and (-webkit-min-device-pixel-ratio: 2), 
+       screen and (min-resolution: 192dpi) {
+  .ascii {
+    text-shadow: 0 0 2px #00ff00;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    animation: none;
+  }
+  
+  .hidden {
+    transition: none;
+  }
+  
+  body::after {
+    display: none;
+  }
 }
