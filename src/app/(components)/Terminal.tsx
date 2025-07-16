@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import '../styles/component-terminal.css';
-import { abort } from 'process';
 
 interface CommandResult {
     output: string;
@@ -19,10 +18,10 @@ export default function Terminal(){
     const [command, setCommand] = useState('');
     const [output, setOutput] = useState<Array<{ time: string; cmd: string }>>([]);
     const [history, setHistory] = useState<string[]>([]);
-    const [historyIndex, setHistoryIndex] = useState<number>(-1);
+    // Removed unused historyIndex state
     const outputRef = useRef<HTMLDivElement>(null);
-    
-    const commands = {
+
+    const commands: Record<string, (args?: string) => CommandResult> = {
         ls: () => ({ output: 'projects/  skills/  experience/  contact/  about.txt' }),
         whoami: () => ({ output: 'andydrei - Full Stack Developer' }),
         pwd: () => ({ output: '/Users/andydrei/personal_portfolio' }),
@@ -84,7 +83,7 @@ export default function Terminal(){
         const argsString = args.join(' ');
 
         if (command in commands) {
-            return (commands as any)[command](argsString);
+            return (commands)[command](argsString);
         }
 
         return { output: `Command not found: ${cmd}. Type 'help' for available commands.` };
@@ -92,7 +91,7 @@ export default function Terminal(){
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            handleOutputRun(e);
+            handleOutputRun();
         } else if (e.key === 'Tab') {
             e.preventDefault(); // Prevent default tab behavior
             
@@ -121,17 +120,19 @@ export default function Terminal(){
                 }
             }
         } else if (e.key === 'ArrowUp') {
-            setHistoryIndex(prevIndex => {
-                const newIndex = Math.max(0, prevIndex === -1 ? history.length - 1 : prevIndex - 1);
-                setCommand(history[newIndex] || '');
-                return newIndex;
-            });
+            // Use local variable for history navigation
+            let newIndex = history.length - 1;
+            if (command !== '' && history.length > 0) {
+                newIndex = Math.max(0, history.findIndex((cmd) => cmd === command) - 1);
+            }
+            setCommand(history[newIndex] || '');
         } else if (e.key === 'ArrowDown') {
-            setHistoryIndex(prevIndex => {
-                const newIndex = Math.min(history.length - 1, prevIndex + 1);
-                setCommand(history[newIndex] || '');
-                return newIndex;
-            });
+            // Use local variable for history navigation
+            let newIndex = 0;
+            if (command !== '' && history.length > 0) {
+                newIndex = Math.min(history.length - 1, history.findIndex((cmd) => cmd === command) + 1);
+            }
+            setCommand(history[newIndex] || '');
         } else if (e.key === 'Escape') {
             setCommand(''); // Clear command input on Escape
         }
@@ -161,7 +162,7 @@ export default function Terminal(){
         setTerminalOpen(!isTerminalOpen);
     };
 
-    const handleOutputRun = (e: any) => {
+    const handleOutputRun = () => {
         if (command.trim() === '') return;
 
         const result = processCommand(command);
@@ -170,7 +171,6 @@ export default function Terminal(){
             setOutput([]);
             setCommand('');
             setHistory([]);
-            setHistoryIndex(-1);
             return;
         }
 
@@ -186,7 +186,6 @@ export default function Terminal(){
             }
         ]);
         setHistory(prevHistory => [...prevHistory, command]);
-        setHistoryIndex(-1);
         setCommand('');
     };
 
